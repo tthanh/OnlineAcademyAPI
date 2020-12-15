@@ -10,6 +10,7 @@ router.post('/login', (req, res) => {
 router.post('/signup', (req, res) => {
     userService.create(req.body)
         .then(() => res.json({}))
+        .catch((msg) => res.status(400).json(msg));
 });
 
 router.put('/update/:userId', (req, res) => {
