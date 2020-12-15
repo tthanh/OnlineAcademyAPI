@@ -20,6 +20,6 @@ app.use('/api/course', require('./routes/course.route'));
 //Global error handler
 //app.use(errorHandler);
 
-app.listen(3000,'0.0.0.0', () => {
+app.listen(process.env.PORT || 3000,'0.0.0.0', () => {
     console.log('Authentication service started on port 3000');
 });
