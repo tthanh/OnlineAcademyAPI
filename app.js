@@ -11,11 +11,11 @@ app.use(morgan('dev'));
 app.use(cors());
 
 app.use(bodyParser.json());
-
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/authentication', require('./routes/authentication.route'));
+app.use('/api/course', require('./routes/course.route'));
 
 //Global error handler
 //app.use(errorHandler);
