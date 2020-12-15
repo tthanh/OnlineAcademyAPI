@@ -10,7 +10,8 @@ module.exports.getById = async (courseId) => {
     return Course.find({"_id": ObjectId(courseId)});
 }
 
-module.exports.update = async (courseParam) => {
+module.exports.update = async (courseId, courseParam) => {
+    Course.update({"_id": ObjectId(courseId)},{$set: courseParam});
 }
 
 module.exports.delete = async (courseId) => {

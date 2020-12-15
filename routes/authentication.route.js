@@ -12,4 +12,9 @@ router.post('/signup', (req, res) => {
         .then(() => res.json({}))
 });
 
+router.put('/update/:userId', (req, res) => {
+    userService.update(req.params.userId, req.body)
+        .then(() => res.json({}));
+});
+
 module.exports = router;
