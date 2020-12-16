@@ -17,6 +17,20 @@ module.exports.authenticate = async ({ username, password }) => {
     }
 }
 
+module.exports.verifyToken = (token) => {
+    var verified = true;
+
+    try{
+        jwt.verify(token,config.secret);
+    }
+    catch(e){
+        console.log(e);
+        verified = false;
+    }
+
+    return verified;
+}
+
 module.exports.getById = async (condition) => {
     if(condition)
         return await User.findOne(condition);
