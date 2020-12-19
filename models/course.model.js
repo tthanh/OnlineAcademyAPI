@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const lessonSchema = require("./lesson.model").schema;
+const lessonSchema = require("./course/lesson.model").schema;
+const feedbackSchema = require("./course/feedback.model").schema;
 
 const mongoSchema = new Schema({
     name: { type: String, required: true },
@@ -15,14 +16,7 @@ const mongoSchema = new Schema({
     lastEdited: { type: Date, default: Date.now },
     price: { type: Number, default: Date.now },
     rating: { type: Number, default: Date.now },
-    comments: [
-        {
-            userID: {type: String},
-            commentHeader: {type: String},
-            commentContent: {type: String},
-            rating:{type: Number}
-        }
-    ],
+    feedback: [ feedbackSchema ],
     lessons: [ lessonSchema ],
 });
 

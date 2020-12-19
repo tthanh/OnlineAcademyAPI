@@ -2,12 +2,12 @@ const db = require('../helpers/mongo_db_connectivity');
 var ObjectId = require('mongodb').ObjectId; 
 const Course = db.Course;
 
-module.exports.getAll = async (condition, offset, limit) => {
-    return Course.find(condition).limit(offset).skip(limit);
+module.exports.getAll = async (query, select, offset, limit) => {
+    return Course.find(query, select).limit(offset).skip(limit);
 }
 
-module.exports.getById = async (courseId) => {
-    return Course.find({"_id": ObjectId(courseId)});
+module.exports.getById = async (courseId,  query, select) => {
+    return Course.find({...query, "_id": ObjectId(courseId)}, select);
 }
 
 module.exports.update = async (courseId, courseParam) => {
