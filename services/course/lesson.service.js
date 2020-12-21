@@ -1,27 +1,35 @@
 const db = require('../../helpers/mongo_db_connectivity');
+const prefixKeys = require("prefix-keys");
 var ObjectId = require('mongodb').ObjectId; 
 const Lesson = db.Lesson;
+const Course = db.Course;
 
 const courseService = require("../course.service");
 
 module.exports.getAll = async (courseId, offset, limit) => {
-    console.log(courseId);
-    return await courseService.getById(courseId, select = "lessons");
+    return await courseService.getById(courseId,undefined,"lessons");
 }
 
 module.exports.getById = async (courseId, lessonId) => {
-    return Course.find({"_id": ObjectId(courseId)});
+    const lessonResult = await courseService.getById(courseId, {"lessons._id":lessonId},{"lessons.$":1});
+    if(lessonResult){
+        return lessonResult.lessons[0];
+    }
 }
 
 module.exports.update = async (courseId, lessonId, lessonParam) => {
-    Course.update({"_id": ObjectId(courseId)},{$set: courseParam});
+    await courseService.update(courseId, {"lessons._id":lessonId},{$set:prefixKeys("lessons.$.",lessonParam)});
 }
 
 module.exports.delete = async (courseId, lessonId) => {
-    Course.remove({"_id": ObjectId(courseId)});
+    const course = await courseService.getById(courseId);
+    course.lessons.pull({"_id": lessonId});
+    course.save();
 }
 
-module.exports.create = async (courseId, lessonId, lessonParam) => {
-    var lesson = new Lesson(lessonParam);
-    await lesson.save();
+module.exports.create = async (courseId, lessonParam) => {
+    const lesson = new Lesson(lessonParam);
+    const course = await courseService.getById(courseId);
+    course.lessons.push(lesson);
+    course.save();
 }

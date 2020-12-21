@@ -55,8 +55,8 @@ module.exports.create = async (userParam) => {
     await user.save();
 }
 
-module.exports.update = async (userId,userParam) => {
-    User.update({"_id": ObjectId(userId)},{$set: userParam});
+module.exports.update = async (userId,updateParam) => {
+    User.update({"_id": ObjectId(userId)},updateParam);
 }
 
 module.exports.changePassword = async ({username,oldPassword,newPassword}) => {

@@ -8,7 +8,7 @@ router.get('/',async (req, res) => {
     res.status(200).send("123");
 });
 
-router.post('/', auth, checkRole(2), async (req, res) => {
+router.post('/', auth, checkRole.hasRole(2), async (req, res) => {
     res.status(200).send({});
 });
 

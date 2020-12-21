@@ -20,17 +20,17 @@ router.get('/', async (req, res) => {
     res.status(200).send(courses);
 });
 
-router.post('/', auth, checkRole(2), async (req, res) => {
+router.post('/', auth, checkRole.hasRole(2), async (req, res) => {
     courseService.create(req.body);
     res.status(200).send({});
 });
 
-router.put('/:courseId', auth, checkRole(2), async (req, res) => {
+router.put('/:courseId', auth, checkRole.hasRole(2), async (req, res) => {
     courseService.update(courseId, req.body);
     res.status(200).send({});
 });
 
-router.delete('/:courseId',auth, checkRole(2), async (req, res) => {
+router.delete('/:courseId',auth, checkRole.hasRole(2), async (req, res) => {
     courseService.delete(courseId);
     res.status(200).send({});
 });

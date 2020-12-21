@@ -7,11 +7,11 @@ module.exports.getAll = async (query, select, offset, limit) => {
 }
 
 module.exports.getById = async (courseId,  query, select) => {
-    return Course.find({...query, "_id": ObjectId(courseId)}, select);
+    return await Course.findOne({...query, "_id": ObjectId(courseId)}, select);
 }
 
-module.exports.update = async (courseId, courseParam) => {
-    Course.update({"_id": ObjectId(courseId)},{$set: courseParam});
+module.exports.update = async (courseId, query, updateParam) => {
+    await Course.updateOne({...query, "_id": ObjectId(courseId)}, updateParam);
 }
 
 module.exports.delete = async (courseId) => {
@@ -21,18 +21,4 @@ module.exports.delete = async (courseId) => {
 module.exports.create = async (courseParam) => {
     var course = new Course(courseParam);
     await course.save();
-    // // validate
-    // if (await User.findOne({ username: userParam.username })) {
-    //     throw 'Username "' + userParam.username + '" is already taken';
-    // }
-
-    // const user = new User(userParam);
-
-    // // hash password
-    // if (userParam.password) {
-    //     user.password = bcrypt.hashSync(userParam.password, 10);
-    // }
-
-    // // save user
-    // await user.save();
 }
