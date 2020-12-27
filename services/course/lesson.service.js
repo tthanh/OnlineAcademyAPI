@@ -2,8 +2,6 @@ const db = require('../../helpers/mongo_db_connectivity');
 const prefixKeys = require("prefix-keys");
 var ObjectId = require('mongodb').ObjectId; 
 const Lesson = db.Lesson;
-const Course = db.Course;
-
 const courseService = require("../course.service");
 
 module.exports.getAll = async (courseId, offset, limit) => {
