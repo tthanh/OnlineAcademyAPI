@@ -18,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/authentication', require('./routes/authentication.route'));
 app.use('/api/course', require('./routes/course.route'));
+app.use('/api/category', require('./routes/category.route'));
 
 app.listen(process.env.PORT || 3000,'0.0.0.0', () => {
     console.log('Authentication service started on port 3000');
