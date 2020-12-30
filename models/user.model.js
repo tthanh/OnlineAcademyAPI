@@ -8,7 +8,8 @@ const mongoSchema = new Schema({
     lastName: { type: String, required: true },
     createdDate: { type: Date, default: Date.now },
     birthDate: { type: Date, default: Date.now },
-    roleId: {type: Number, required: true}
+    roleId: {type: Number, required: true},
+    watchList: [{type: String,require: true}]
 });
 
 mongoSchema.set('toJSON', {

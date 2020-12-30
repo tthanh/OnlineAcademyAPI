@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const lessonSchema = require("./course/lesson.model").schema;
 const feedbackSchema = require("./course/feedback.model").schema;
-
 const mongoSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String},
@@ -14,10 +13,12 @@ const mongoSchema = new Schema({
     teacherId: { type: String, required: true },
     createdDate: { type: Date, default: Date.now },
     lastEdited: { type: Date, default: Date.now },
-    price: { type: Number, default: Date.now },
-    rating: { type: Number, default: Date.now },
+    price: { type: Number, default: 0 },
+    rating: { type: Number, default: 0 },
+    discount: { type: Number, default: 0 },
     feedback: [ feedbackSchema ],
     lessons: [ lessonSchema ],
+    categoryId: { type: String, required: true },
 });
 
 mongoSchema.set('toJSON', {

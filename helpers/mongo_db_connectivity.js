@@ -11,5 +11,6 @@ module.exports = {
     Lesson: require('../models/course/lesson.model'),
     Feedback: require('../models/course/feedback.model'),
     Category: require('../models/category.model'),
-    Purchase: require('../models/purchase.model')
+    Purchase: require('../models/purchase.model'),
+    Enrollment: require('../models/enrollment.model'),
 };

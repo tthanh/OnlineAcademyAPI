@@ -24,8 +24,12 @@ router.post('/', auth, checkRole.hasRole(3), async (req, res) => {
 });
 
 router.delete('/:categoryId',auth, checkRole.hasRole(3), async (req, res) => {
-    categoryService.delete(req.params.categoryId);
-    res.status(200).send({});
+    if(await categoryService.delete(req.params.categoryId)){
+        res.status(200).send({});
+    }
+    else{
+        res.status(500).send({});
+    }
 });
 
 router.post('/:categoryId', auth, checkRole.hasRole(3), async (req, res) => {

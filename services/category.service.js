@@ -49,7 +49,13 @@ module.exports.deleteSubcategory = async (categoryId, subcategoryId) => {
 }
 
 module.exports.delete = async (categoryId) => {
-    Category.remove({"_id": ObjectId(categoryId)});
+    try{
+        const a = await Category.deleteOne({"_id": ObjectId(categoryId)});
+        return true;
+    }
+    catch(e){
+        return false;
+    }
 }
 
 module.exports.create = async (categoryParam) => {

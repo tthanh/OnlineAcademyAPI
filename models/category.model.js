@@ -19,4 +19,5 @@ mongoSchema.set('toJSON', {
     }
 });
 
+module.exports.schema = mongoSchema;
 module.exports = mongoose.model('Category', mongoSchema);

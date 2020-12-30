@@ -16,13 +16,28 @@ router.get('/:courseId',async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    let courses= await courseService.getAll();
+    const offset = parseInt(req.query.offset);
+    const limit = parseInt(req.query.limit);
+
+    let courses ={}
+    if(req.query.keyword){
+        courses = await courseService.search(req.query.keyword,offset,limit);
+    }
+    else{
+        courses= await courseService.getAll(undefined,undefined, offset, limit);
+    }
+
     res.status(200).send(courses);
 });
 
 router.post('/', auth, checkRole.hasRole(2), async (req, res) => {
-    courseService.create(req.body);
-    res.status(200).send({});
+    if(await courseService.create(req.body)){
+        res.status(200).send({});
+    }
+    else{
+        res.status(500).send({});
+    }
+    
 });
 
 router.put('/:courseId', auth, checkRole.hasRole(2), async (req, res) => {
@@ -32,6 +47,16 @@ router.put('/:courseId', auth, checkRole.hasRole(2), async (req, res) => {
 
 router.delete('/:courseId',auth, checkRole.hasRole(2), async (req, res) => {
     courseService.delete(courseId);
+    res.status(200).send({});
+});
+
+router.post('/:courseId/enroll/:userId', auth, checkRole.hasRole(1), async (req, res) => {
+    courseService.enrollCourse(req.params.courseId,req.params.userId);
+    res.status(200).send({});
+});
+
+router.delete('/:courseId/enroll/:userId',auth, checkRole.hasRole(1), async (req, res) => {
+    courseService.unenrollCourse(req.params.courseId,req.params.userId);
     res.status(200).send({});
 });
 
