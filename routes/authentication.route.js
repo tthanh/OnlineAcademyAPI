@@ -4,9 +4,25 @@ const userService = require('../services/authentication.service');
 const auth = require('../middlewares/auth.mdw');
 const checkRole = require('../middlewares/check_role.mdw');
 
+// router.post('/login', (req, res) => {
+//     userService.authenticate(req.body)
+//     .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
+// });
+
 router.post('/login', (req, res) => {
-    userService.authenticate(req.body)
+    userService.authenticateOTP(req.body)
     .then(user => user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
+});
+
+router.post('/verify', async (req, res) => {
+    const otpResult = await userService.verifyOTP(req.body);
+
+    if(otpResult){
+        res.status(200).send(otpResult);
+    }
+    else{
+        res.status(400).send("Invalid OTP");
+    }
 });
 
 router.post('/signup', (req, res) => {

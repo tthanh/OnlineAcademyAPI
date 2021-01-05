@@ -13,4 +13,5 @@ module.exports = {
     Category: require('../models/category.model'),
     Purchase: require('../models/purchase.model'),
     Enrollment: require('../models/enrollment.model'),
+    Otp: require('../models/otp.model')
 };

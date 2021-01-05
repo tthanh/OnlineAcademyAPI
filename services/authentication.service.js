@@ -2,9 +2,12 @@ const config = require('../config.json');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../helpers/mongo_db_connectivity');
+const mailer = require('../helpers/mailer.helper');
 const { isValidObjectId } = require('mongoose');
 var ObjectId = require('mongodb').ObjectId; 
 const User = db.User;
+
+const otpService = require('../services/otp.service');
 
 module.exports.authenticate = async ({ username, password }) => {
     const user = await User.findOne({ username });
@@ -14,6 +17,26 @@ module.exports.authenticate = async ({ username, password }) => {
             ...user.toJSON(),
             token
         },'password');
+    }
+}
+
+module.exports.authenticateOTP = async ({ username, password }) => {
+    const user = await User.findOne({ username });
+    if (user && bcrypt.compareSync(password, user.password)) {     
+        return await otpService.generateOtp(user);   
+    }
+}
+
+module.exports.verifyOTP = async ({ username, otp }) => {
+    const user = await User.findOne({ username });
+    if (user) {
+        if(await otpService.verifyOtp(otp,user._id)){
+            const token = jwt.sign({ sub: user.id, role: user.roleId }, config.secret, { expiresIn: '7d' });
+            return _.omit({
+                ...user.toJSON(),
+                token
+            },'password');
+        }
     }
 }
 
