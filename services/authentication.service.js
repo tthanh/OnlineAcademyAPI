@@ -28,8 +28,9 @@ module.exports.authenticate = async ({ email, password }) => {
     }
 }
 
-module.exports.verifyOTP = async ({ username, otp }) => {
-    const user = await User.findOne({ username });
+module.exports.verifyOTP = async ({ email, otp }) => {
+    const user = await User.findOne({ email });
+    console.log(user);
     if (user) {
         if(await otpService.verifyOtp(otp,user._id)){
             user.verified = true;
