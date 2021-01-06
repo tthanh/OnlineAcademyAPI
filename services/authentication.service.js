@@ -20,7 +20,7 @@ module.exports.authenticate = async ({ email, password }) => {
 
     const user = await User.findOne({ email });
     if (user && bcrypt.compareSync(password, user.password) && user.verified) {
-        const token = jwt.sign({ sub: user.id, role: user.roleId }, config.secret, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: user.id, role: user.roleId }, config.secret, { expiresIn: '7d' });
         return _.omit({
             ...user.toJSON(),
             token
@@ -68,6 +68,11 @@ module.exports.create = async (userParam) => {
         throw 'Username "' + email + '" is already taken';
     }
 
+    if(userParam.roleId != 1 || userParam.roleId != 2)
+    {
+        throw "Wrong role id";
+    }
+
     const user = new User(userParam);
 
     // hash password
@@ -80,8 +85,8 @@ module.exports.create = async (userParam) => {
     return await otpService.generateOtp(user);
 }
 
-module.exports.update = async (userId,updateParam) => {
-    User.update({"_id": ObjectId(userId)},updateParam);
+module.exports.update = async (userId,{firstName, lastName, birthDate}) => {
+    User.findByIdAndUpdate(ObjectId(userId),{...firstName,lastName,birthDate});
 }
 
 module.exports.changePassword = async ({username,oldPassword,newPassword}) => {

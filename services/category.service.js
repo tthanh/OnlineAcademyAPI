@@ -11,8 +11,6 @@ module.exports.getById = async (categoryId,  query, select) => {
 }
 
 module.exports.createSubcategory = async (categoryId, subcategory) => {
-    console.log(categoryId);
-    console.log(subcategory);
     try{
         const category = await this.getById(categoryId);
         if(!category){

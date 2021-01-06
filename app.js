@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/authentication', require('./routes/authentication.route'));
+app.use('/api/user', require('./routes/user.route'));
 app.use('/api/course', require('./routes/course.route'));
 app.use('/api/category', require('./routes/category.route'));
 app.use('/api/purchase', require('./routes/purchase.route'));

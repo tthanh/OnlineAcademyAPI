@@ -1,7 +1,7 @@
 const { decode } = require('jsonwebtoken');
 const jwtDecode = require('jwt-decode');
 
-module.exports.hasRole = (role) => (req, res, next) => {
+module.exports.hasRole = (roleId) => (req, res, next) => {
     var accessToken = req.headers['authorization'];
     if (!accessToken)
         res.status(403);
@@ -11,13 +11,15 @@ module.exports.hasRole = (role) => (req, res, next) => {
     if(!decoded)
         res.status(403);
         
-    if(role != decoded.role)
+    if(roleId != decoded.roleId)
         res.status(403);
-                
+    console.log(decoded);
+    res.locals.userId = decoded.userId;
+    res.locals.roleId = decoded.roleId; 
     next();
 }
 
-module.exports.hasRoleGreaterThan = (role) => (req, res, next) => {
+module.exports.hasRoleGreaterThan = (roleId) => (req, res, next) => {
     var accessToken = req.headers['authorization'];
     if (!accessToken)
         res.status(403);
@@ -27,8 +29,9 @@ module.exports.hasRoleGreaterThan = (role) => (req, res, next) => {
     if(!decoded)
         res.status(403);
         
-    if(decoded.role >= role)
+    if(decoded.roleId >= roleId)
         res.status(403);
-                
+    res.locals.userId = decoded.userId;
+    res.locals.roleId = decoded.roleId; 
     next();
 }
