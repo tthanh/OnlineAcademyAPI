@@ -9,6 +9,7 @@ const mongoSchema = new Schema({
     createdDate: { type: Date, default: Date.now },
     birthDate: { type: Date, default: Date.now },
     roleId: {type: Number, required: true},
+    verified: {type: Boolean,default: false},
     watchList: [{type: String,require: true}]
 });
 

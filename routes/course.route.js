@@ -38,10 +38,10 @@ router.post('/', auth, checkRole.hasRole(2), async (req, res) => {
         res.status(500).send({});
     }
     
-});
+}); 
 
 router.put('/:courseId', auth, checkRole.hasRole(2), async (req, res) => {
-    courseService.update(courseId, req.body);
+    courseService.update(req.params.courseId,undefined, req.body);
     res.status(200).send({});
 });
 
