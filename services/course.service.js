@@ -49,7 +49,48 @@ module.exports.getById = async (courseId,  query, select) => {
 }
 
 module.exports.getByIds = async (courseIds,  query, select) => {
-    return await Course.findOne({...query, "_id": { $in : courseIds } }, select);
+    var courses = await Course.aggregate([
+        {
+            "$match":{
+                "_id": { $in : courseIds.map(x =>ObjectId(x)) }
+            }
+        },
+        { 
+          "$lookup":{
+            from: "users",
+            localField: "teacherId",
+            foreignField: "_id",
+            as: "teacher"
+          }
+        },
+        { 
+          "$lookup":{
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category"
+          }
+        },
+        {
+          "$project":{
+            "category.subCategories": 0,
+            "feedback": 0,
+            "lessons": 0,
+            "categoryId": 0,
+            "teacher.verified": 0,
+            "teacher.watchList": 0,
+            "teacher.verified": 0,
+            "teacher.password": 0,
+            "teacher.birthDate": 0,
+            "teacher.roleId": 0,
+            "teacher.createdDate": 0        
+          }
+        },
+        {"$unwind": "$teacher"},
+        {"$unwind": "$category"}
+        ]);
+
+        return courses;
 }
 
 module.exports.update = async (courseId, query, updateParam) => {
