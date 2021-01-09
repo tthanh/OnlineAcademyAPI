@@ -1,10 +1,11 @@
 const db = require('../helpers/mongo_db_connectivity');
 var ObjectId = require('mongodb').ObjectId; 
 const Course = db.Course;
+const Category = db.Category;
 const Enrollment = db.Enrollment;
 
-module.exports.getAll = async (query, select, offset, limit) => {
-    return await Course.aggregate([
+module.exports.getAll = async (offset, limit) => {
+    var courses = await Course.aggregate([
         { 
           "$lookup":{
             from: "users",
@@ -27,7 +28,6 @@ module.exports.getAll = async (query, select, offset, limit) => {
             "feedback": 0,
             "lessons": 0,
             "categoryId": 0,
-            "subCategoryId": 0,
             "teacher.verified": 0,
             "teacher.watchList": 0,
             "teacher.verified": 0,
@@ -40,10 +40,16 @@ module.exports.getAll = async (query, select, offset, limit) => {
         {"$unwind": "$teacher"},
         {"$unwind": "$category"}
         ]).limit(limit).skip(offset);
+
+        return courses;
 }
 
 module.exports.getById = async (courseId,  query, select) => {
     return await Course.findOne({...query, "_id": ObjectId(courseId)}, select);
+}
+
+module.exports.getByIds = async (courseIds,  query, select) => {
+    return await Course.findOne({...query, "_id": { $in : courseIds } }, select);
 }
 
 module.exports.update = async (courseId, query, updateParam) => {

@@ -21,6 +21,7 @@ app.use('/api/user', require('./routes/user.route'));
 app.use('/api/course', require('./routes/course.route'));
 app.use('/api/category', require('./routes/category.route'));
 app.use('/api/purchase', require('./routes/purchase.route'));
+app.use('/api/watchlist', require('./routes/watchlist.route'));
 
 app.listen(process.env.PORT || 3000,'0.0.0.0', () => {
     console.log('Authentication service started on port 3000');

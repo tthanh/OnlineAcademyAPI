@@ -68,7 +68,8 @@ module.exports.create = async (userParam) => {
         throw 'Username "' + email + '" is already taken';
     }
 
-    if(userParam.roleId != 1 || userParam.roleId != 2)
+    console.log(userParam);
+    if(userParam.roleId != 1 && userParam.roleId != 2)
     {
         throw "Wrong role id";
     }

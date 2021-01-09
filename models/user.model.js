@@ -10,7 +10,7 @@ const mongoSchema = new Schema({
     birthDate: { type: Date, default: Date.now },
     roleId: {type: Number, required: true},
     verified: {type: Boolean,default: false},
-    watchList: [{type: String,require: true}]
+    watchList: [{type: String,require: true, unique: true}]
 });
 
 mongoSchema.set('toJSON', {

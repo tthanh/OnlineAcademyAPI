@@ -10,7 +10,7 @@ router.put('/', auth, checkRole.hasRoleGreaterThan(1), (req, res) => {
 });
 
 router.get('/', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
-    res.send(await userService.getById(res.locals.userId));
+    res.send(await userService.getById({_id :res.locals.userId}));
 });
 
 module.exports = router;

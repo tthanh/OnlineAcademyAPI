@@ -3,10 +3,11 @@ const { isValidObjectId } = require('mongoose');
 var ObjectId = require('mongodb').ObjectId;
 const User = db.User;
 
-module.exports.getById = async ({ userId }) => {
-  if ({ userId }) {
-    const user = await User.findOne({ userId });
+const courseService = require('../services/course.service');
 
+module.exports.getById = async ({ _id }) => {
+  if (_id) {
+    const user = await User.findOne({ _id });
     if (user)
       return _.omit({
         ...user.toJSON()
@@ -28,4 +29,64 @@ function clean(obj) {
 
 module.exports.update = async (userId, updateParam) => {
   await User.findByIdAndUpdate(ObjectId(userId), clean(updateParam));
+}
+
+module.exports.getWatchList = async ({ _id }) => {
+  if (_id) {
+    const user = await User.findOne({ _id });
+    console.log(user);
+    if (user)
+      return courseService.getByIds(user.toJSON().watchList);
+  }
+  else {
+    return;
+  }
+}
+
+module.exports.addToWatchList = async ({_id, courseId}) => {
+  try{
+    if (!_id || !courseId) {
+      return false;
+    }
+      const user = await User.findOne({ _id });
+
+      if(!user){
+        return false;
+      }
+      
+      if(user.watchList.includes(courseId))
+        return false;
+
+      await user.watchList.push(courseId);
+      await user.save();
+      return true;
+  }
+  catch (e){
+    console.log(e);
+    return false;
+  }
+}
+
+module.exports.removeFromWatchList = async ({_id, courseId}) => {
+  try{
+    if (!_id || !courseId) {
+      return false;
+    }
+      const user = await User.findOne({ _id });
+
+      if(!user){
+        return false;
+      }
+      
+      if(!user.watchList.includes(courseId))
+        return false;
+
+      await user.watchList.pull(courseId);
+      await user.save();
+      return true;
+  }
+  catch (e){
+    console.log(e);
+    return false;
+  }
 }

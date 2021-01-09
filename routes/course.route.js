@@ -36,12 +36,7 @@ router.get('/', async (req, res) => {
     else{
         courses= await courseService.getAll(undefined,undefined, offset, limit);
     }
-
-    courses = courses
-        .map(c =>{
-            return _.omit(c,'feedback','lessons','lastEdited','samplePictures','teacherId')
-        });
-
+    console.log(courses);
     res.status(200).send(courses);
 });
 
