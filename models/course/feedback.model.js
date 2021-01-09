@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mongoSchema = new Schema({
-    userID: {type: String},
+    userID: {type: mongoose.Schema.ObjectId},
     feedbackHeader: {type: String},
     feedbackContent: {type: String},
     rating:{type: Number}

@@ -4,7 +4,42 @@ const Course = db.Course;
 const Enrollment = db.Enrollment;
 
 module.exports.getAll = async (query, select, offset, limit) => {
-    return Course.find(query, select).limit(limit).skip(offset);
+    return await Course.aggregate([
+        { 
+          "$lookup":{
+            from: "users",
+            localField: "teacherId",
+            foreignField: "_id",
+            as: "teacher"
+          }
+        },
+        { 
+          "$lookup":{
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category"
+          }
+        },
+        {
+          "$project":{
+            "category.subCategories": 0,
+            "feedback": 0,
+            "lessons": 0,
+            "categoryId": 0,
+            "subCategoryId": 0,
+            "teacher.verified": 0,
+            "teacher.watchList": 0,
+            "teacher.verified": 0,
+            "teacher.password": 0,
+            "teacher.birthDate": 0,
+            "teacher.roleId": 0,
+            "teacher.createdDate": 0        
+          }
+        },
+        {"$unwind": "$teacher"},
+        {"$unwind": "$category"}
+        ]).limit(limit).skip(offset);
 }
 
 module.exports.getById = async (courseId,  query, select) => {
@@ -54,5 +89,5 @@ module.exports.unenrollCourse = async (courseId, userId) => {
 }
 
 module.exports.search = async (keyword, offset, limit) => {
-    return await Course.find({$text: {$search: keyword}}).limit(limit).skip(offset);
+    return await Course.find({$text: {$search: keyword}},).limit(limit).skip(offset);
 }

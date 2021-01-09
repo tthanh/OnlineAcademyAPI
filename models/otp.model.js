@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const mongoSchema = new Schema({
     generatedDate: { type: Date, default: Date.now },
     otp: { type: String, required: true },
-    userId: { type: String, required: true },
+    userId: { type: mongoose.Schema.ObjectId, required: true },
 });
 
 mongoSchema.set('toJSON', {

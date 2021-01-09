@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const mongoSchema = new Schema({
     enrollDate: { type: Date, default: Date.now },
-    courseId: { type: String, required: true },
-    userId: { type: String, required: true },
+    courseId: { type: mongoose.Schema.ObjectId, required: true },
+    userId: { type: mongoose.Schema.ObjectId, required: true },
 
 });
 

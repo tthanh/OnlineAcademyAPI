@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const courseService = require('../services/course.service');
+const userService = require('../services/user.service');
 const auth = require('../middlewares/auth.mdw');
 const checkRole = require('../middlewares/check_role.mdw');
 const feedbackRouter = require('./course/feedback.route');
@@ -16,16 +17,30 @@ router.get('/:courseId',async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    const offset = parseInt(req.query.offset);
-    const limit = parseInt(req.query.limit);
+    let offset = parseInt(req.query.offset);
+    let limit = parseInt(req.query.limit);
 
     let courses ={}
+
+    if(isNaN(offset) ||offset < 0){
+        offset = 0;
+    }
+
+    if(isNaN(limit) || limit < 0){
+        limit = 20;
+    }
+    console.log(limit);
     if(req.query.keyword){
         courses = await courseService.search(req.query.keyword,offset,limit);
     }
     else{
         courses= await courseService.getAll(undefined,undefined, offset, limit);
     }
+
+    courses = courses
+        .map(c =>{
+            return _.omit(c,'feedback','lessons','lastEdited','samplePictures','teacherId')
+        });
 
     res.status(200).send(courses);
 });
