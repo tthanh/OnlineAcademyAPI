@@ -5,7 +5,7 @@ const auth = require('../middlewares/auth.mdw');
 const checkRole = require('../middlewares/check_role.mdw');
 const isValidDate = require('../helpers/date.helper').isValidDate;
 
-router.get('/',checkRole.hasRole(1), async (req, res) => {
+router.get('/',auth, checkRole.hasRole(1), async (req, res) => {
     var userId = req.query.userId;
     var courseId = req.query.courseId;
     let date = new Date(req.query.date);

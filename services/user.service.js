@@ -34,7 +34,6 @@ module.exports.update = async (userId, updateParam) => {
 module.exports.getWatchList = async ({ _id }) => {
   if (_id) {
     const user = await User.findOne({ _id });
-    console.log(user);
     if (user)
       return courseService.getByIds(user.toJSON().watchList);
   }

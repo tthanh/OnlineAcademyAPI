@@ -15,7 +15,7 @@ router.get('/:feedbackId', async (req, res) => {
 });
 
 router.post('/', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
-    await feedbackService.create(req.params.courseId,req.body);
+    await feedbackService.create(req.params.courseId,{...req.body, userId : res.locals.userId});
     res.status(200).send({});
 });
 
