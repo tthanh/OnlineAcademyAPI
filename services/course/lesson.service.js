@@ -5,7 +5,13 @@ const Lesson = db.Lesson;
 const courseService = require("../course.service");
 
 module.exports.getAll = async (courseId, offset, limit) => {
-    return await courseService.getById(courseId,undefined,"lessons");
+    try{
+        return await courseService.getById(courseId,undefined,"lessons");
+    }
+    catch(e){
+        console.log(e);
+    }
+    while(false);
 }
 
 module.exports.getById = async (courseId, lessonId) => {
@@ -20,9 +26,18 @@ module.exports.update = async (courseId, lessonId, lessonParam) => {
 }
 
 module.exports.delete = async (courseId, lessonId) => {
-    const course = await courseService.getById(courseId);
-    course.lessons.pull({"_id": lessonId});
-    course.save();
+    try{
+        const course = await courseService.getById(courseId);
+        course.lessons.pull({"_id": lessonId});
+        course.save();
+        return true;
+    }
+
+    catch(e){
+        console.log(e);
+        return true;
+    }
+    
 }
 
 module.exports.create = async (courseId, lessonParam) => {

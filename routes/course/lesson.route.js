@@ -26,8 +26,13 @@ router.put('/:lessonId', auth, checkRole.hasRole(2), async (req, res) => {
 });
 
 router.delete('/:lessonId',auth, checkRole.hasRole(2), async (req, res) => {
-    await lessonService.delete(req.params.courseId,req.params.lessonId);
-    res.status(200).send({});
+    if(await lessonService.delete(req.params.courseId,req.params.lessonId)){
+        res.sendStatus(200);
+    }
+    else{
+        res.sendStatus(400);
+    }
 });
+    
 
 module.exports = router;
