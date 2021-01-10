@@ -29,14 +29,12 @@ router.get('/', async (req, res) => {
     if(isNaN(limit) || limit < 0){
         limit = 20;
     }
-    console.log(limit);
     if(req.query.keyword){
         courses = await courseService.search(req.query.keyword,offset,limit);
     }
     else{
-        courses= await courseService.getAll(undefined,undefined, offset, limit);
+        courses= await courseService.getAll(offset, limit);
     }
-    console.log(courses);
     res.status(200).send(courses);
 });
 

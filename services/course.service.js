@@ -14,20 +14,10 @@ module.exports.getAll = async (offset, limit) => {
             as: "teacher"
           }
         },
-        { 
-          "$lookup":{
-            from: "categories",
-            localField: "categoryId",
-            foreignField: "_id",
-            as: "category"
-          }
-        },
         {
           "$project":{
-            "category.subCategories": 0,
             "feedback": 0,
             "lessons": 0,
-            "categoryId": 0,
             "teacher.verified": 0,
             "teacher.watchList": 0,
             "teacher.verified": 0,
@@ -37,11 +27,24 @@ module.exports.getAll = async (offset, limit) => {
             "teacher.createdDate": 0        
           }
         },
-        {"$unwind": "$teacher"},
-        {"$unwind": "$category"}
+        {"$unwind": "$teacher"}
         ]).limit(limit).skip(offset);
 
-        return courses;
+        let coursesJson = JSON.parse(JSON.stringify(courses));
+        
+        coursesJson = Promise.all(coursesJson.map(async x => {
+          const category = await Category.findOne({_id : x.categoryId});
+          const categoryJson = category.toJSON();
+
+          x.subCategory = categoryJson.subCategories.find(y => y._id == x.subCategoryId );
+
+          x.category = _.omit({
+              ...category.toJSON()
+          },'subCategories');
+          return _.omit({...x},'categoryId','subCategoryId');
+        }));
+
+        return coursesJson;
 }
 
 module.exports.getById = async (courseId,  query, select) => {
@@ -49,48 +52,95 @@ module.exports.getById = async (courseId,  query, select) => {
 }
 
 module.exports.getByIds = async (courseIds,  query, select) => {
-    var courses = await Course.aggregate([
-        {
-            "$match":{
-                "_id": { $in : courseIds.map(x =>ObjectId(x)) }
-            }
-        },
-        { 
-          "$lookup":{
-            from: "users",
-            localField: "teacherId",
-            foreignField: "_id",
-            as: "teacher"
-          }
-        },
-        { 
-          "$lookup":{
-            from: "categories",
-            localField: "categoryId",
-            foreignField: "_id",
-            as: "category"
-          }
-        },
-        {
-          "$project":{
-            "category.subCategories": 0,
-            "feedback": 0,
-            "lessons": 0,
-            "categoryId": 0,
-            "teacher.verified": 0,
-            "teacher.watchList": 0,
-            "teacher.verified": 0,
-            "teacher.password": 0,
-            "teacher.birthDate": 0,
-            "teacher.roleId": 0,
-            "teacher.createdDate": 0        
-          }
-        },
-        {"$unwind": "$teacher"},
-        {"$unwind": "$category"}
-        ]);
+  var courses = await Course.aggregate([
+    {
+      "$match":{
+          "_id": { $in : courseIds.map(x =>ObjectId(x)) }
+      }
+    },
+    { 
+      "$lookup":{
+        from: "users",
+        localField: "teacherId",
+        foreignField: "_id",
+        as: "teacher"
+      }
+    },
+    {
+      "$project":{
+        "feedback": 0,
+        "lessons": 0,
+        "teacher.verified": 0,
+        "teacher.watchList": 0,
+        "teacher.verified": 0,
+        "teacher.password": 0,
+        "teacher.birthDate": 0,
+        "teacher.roleId": 0,
+        "teacher.createdDate": 0        
+      }
+    },
+    {"$unwind": "$teacher"}
+    ]);
 
-        return courses;
+    let coursesJson = JSON.parse(JSON.stringify(courses));
+    
+    coursesJson = Promise.all(coursesJson.map(async x => {
+      const category = await Category.findOne({_id : x.categoryId});
+      const categoryJson = category.toJSON();
+
+      x.subCategory = categoryJson.subCategories.find(y => y._id == x.subCategoryId );
+
+      x.category = _.omit({
+          ...category.toJSON()
+      },'subCategories');
+
+      return _.omit({...x},'categoryId','subCategoryId');
+    }));
+
+    return coursesJson;
+
+    // var courses = await Course.aggregate([
+    //     {
+    //         "$match":{
+    //             "_id": { $in : courseIds.map(x =>ObjectId(x)) }
+    //         }
+    //     },
+    //     { 
+    //       "$lookup":{
+    //         from: "users",
+    //         localField: "teacherId",
+    //         foreignField: "_id",
+    //         as: "teacher"
+    //       }
+    //     },
+    //     { 
+    //       "$lookup":{
+    //         from: "categories",
+    //         localField: "categoryId",
+    //         foreignField: "_id",
+    //         as: "category"
+    //       }
+    //     },
+    //     {
+    //       "$project":{
+    //         "category.subCategories": 0,
+    //         "feedback": 0,
+    //         "lessons": 0,
+    //         "categoryId": 0,
+    //         "teacher.verified": 0,
+    //         "teacher.watchList": 0,
+    //         "teacher.verified": 0,
+    //         "teacher.password": 0,
+    //         "teacher.birthDate": 0,
+    //         "teacher.roleId": 0,
+    //         "teacher.createdDate": 0        
+    //       }
+    //     },
+    //     {"$unwind": "$teacher"},
+    //     {"$unwind": "$category"}
+    //     ]);
+
+    //     return courses;
 }
 
 module.exports.update = async (courseId, query, updateParam) => {
