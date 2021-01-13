@@ -18,6 +18,14 @@ module.exports.getById = async ({ _id }) => {
   }
 }
 
+module.exports.getAll = async () => {
+  const users = await User.find();
+  if (users)
+    return users.map(u => _.omit({
+      ...u.toJSON()
+    }, 'password', 'watchList'));
+}
+
 function clean(obj) {
   for (var propName in obj) {
     if (obj[propName] === null || obj[propName] === undefined) {
@@ -29,6 +37,10 @@ function clean(obj) {
 
 module.exports.update = async (userId, updateParam) => {
   await User.findByIdAndUpdate(ObjectId(userId), clean(updateParam));
+}
+
+module.exports.delete = async (userId) => {
+  await User.deleteOne({"_id": ObjectId(userId)});
 }
 
 module.exports.getWatchList = async ({ _id }) => {

@@ -13,4 +13,12 @@ router.get('/', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
     res.send(await userService.getById({_id :res.locals.userId}));
 });
 
+router.get('/all', auth, checkRole.hasRole(3), async (req, res) => {
+    res.send(await userService.getAll());
+});
+
+router.delete('/:userId', auth, checkRole.hasRole(3), async (req, res) => {
+    res.send(await userService.delete(req.params.userId));
+});
+
 module.exports = router;

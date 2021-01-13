@@ -47,3 +47,32 @@ module.exports.verifyOtp = async (otp, userId) => {
         return false;
     }
 }
+
+
+module.exports.sendNewPassword = async (user,newPassword) => {
+    try{
+
+        const mailOptions = {
+            from: "derekzohar.lol@gmail.com",
+            to: user.email,
+            subject: "Your new password is",
+            html: `<p>Hi t0942842441@gmail.com</p> <br/>
+                    <pre>Your new password is ${newPassword}</pre><br/>
+                    <pre>Cheers, OnlineAcademy Team</pre>`
+        }
+
+        mailer.transporter.sendMail(mailOptions,(mailerr,info)=> {
+            if(mailerr){
+                return true;
+            }else{
+                return false;
+            }
+        })
+
+        return true;
+    }
+    catch(e){
+        console.log(e);
+        return false;
+    }
+}

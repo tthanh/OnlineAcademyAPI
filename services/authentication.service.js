@@ -115,3 +115,24 @@ module.exports.changePassword = async ({username,oldPassword,newPassword}) => {
     
     return result;
 }
+
+module.exports.forgotPassword = async ({email}) => {
+    var result = false;
+
+    do {
+        var user = await User.findOne({email});
+        if(!user){
+            break;
+        }
+
+        const newPassword = Math.floor(100000 + Math.random() * 900000).toString();
+        await otpService.sendNewPassword(user,newPassword);
+
+        user.password = bcrypt.hashSync(newPassword, 10);
+        
+        await user.save();
+    }
+    while(false);
+    
+    return result;
+};

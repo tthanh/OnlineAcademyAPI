@@ -26,6 +26,12 @@ router.post('/signup', (req, res) => {
         .catch((msg) => res.status(400).json(msg));
 });
 
+router.post('/forgot_password', (req, res) => {
+    authService.forgotPassword(req.body)
+        .then(() => res.json({}))
+        .catch((msg) => {console.log(msg); res.status(400).json(msg)});
+});
+
 router.put('/update/:userId', auth, checkRole.hasRole(1), (req, res) => {
     authService.update(req.params.userId, req.body)
         .then(() => res.json({}));
