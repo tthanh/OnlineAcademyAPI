@@ -9,9 +9,9 @@ module.exports = {
     User: require('../models/user.model'),
     Course: require('../models/course.model'),
     Lesson: require('../models/course/lesson.model'),
+    Enrollment: require('../models/course/enrollment.model'),
     Feedback: require('../models/course/feedback.model'),
     Category: require('../models/category.model'),
     Purchase: require('../models/purchase.model'),
-    Enrollment: require('../models/enrollment.model'),
     Otp: require('../models/otp.model')
 };

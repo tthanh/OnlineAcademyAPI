@@ -6,10 +6,12 @@ const auth = require('../middlewares/auth.mdw');
 const checkRole = require('../middlewares/check_role.mdw');
 const feedbackRouter = require('./course/feedback.route');
 const lessonRouter = require('./course/lesson.route');
+const enrollmentRouter = require('./course/enrollment.route');
 
 //comments routes
 router.use('/:courseId/feedback', feedbackRouter);
 router.use('/:courseId/lesson', lessonRouter);
+router.use('/:courseId/enrollment', enrollmentRouter);
 
 router.get('/:courseId',async (req, res) => {
     let course = await courseService.getById(req.params.courseId);
@@ -39,23 +41,35 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', auth, checkRole.hasRole(2), async (req, res) => {
+    if(req.body.teacherId !== res.locals.userId){
+        res.sendStatus(401);
+    }
+
     if(await courseService.create(req.body)){
-        res.status(200).send({});
+        res.sendStatus(200);
     }
     else{
-        res.status(500).send({});
+        res.sendStatus(500);
     }
     
 }); 
 
 router.put('/:courseId', auth, checkRole.hasRole(2), async (req, res) => {
-    courseService.update(req.params.courseId,undefined, req.body);
-    res.status(200).send({});
+    if(await courseService.update(req.params.courseId, req.body)){
+        res.status(200).send({});
+    }
+    else{
+        res.sendStatus(500);
+    }
 });
 
-router.delete('/:courseId',auth, checkRole.hasRole(2), async (req, res) => {
-    courseService.delete(courseId);
-    res.status(200).send({});
+router.delete('/:courseId',auth, checkRole.hasRoleGreaterThan(2), async (req, res) => {
+    if(await courseService.delete(req.params.courseId, res.locals.userId,res.locals.roleId)){
+        res.status(200).send({});
+    }
+    else{
+        res.status(400).send({});
+    }
 });
 
 router.post('/:courseId/enroll/:userId', auth, checkRole.hasRole(1), async (req, res) => {

@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const lessonSchema = require("./course/lesson.model").schema;
 const feedbackSchema = require("./course/feedback.model").schema;
-const categorySchema = require("./category.model").schema;
+const enrollmentSchema = require("./course/enrollment.model").schema;
+// const categorySchema = require("./category.model").schema;
 const mongoSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String},
@@ -20,6 +21,7 @@ const mongoSchema = new Schema({
     discount: { type: Number, default: 0 },
     feedback: [ feedbackSchema ],
     lessons: [ lessonSchema ],
+    enrollment: [ enrollmentSchema ],
     categoryId: { type: mongoose.Schema.ObjectId, required: true },
     subCategoryId: {type: mongoose.Schema.ObjectId, required: true },
 });

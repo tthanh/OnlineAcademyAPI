@@ -4,7 +4,6 @@ const purchaseService = require('../services/purchase.service');
 const courseService = require('../services/course.service');
 const auth = require('../middlewares/auth.mdw');
 const checkRole = require('../middlewares/check_role.mdw');
-const isValidDate = require('../helpers/date.helper').isValidDate;
 
 router.get('/',auth, checkRole.hasRole(1), async (req, res) => {
     var userId = res.locals.userId;

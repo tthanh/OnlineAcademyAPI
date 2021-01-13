@@ -18,6 +18,7 @@ module.exports.getAll = async (offset, limit) => {
           "$project":{
             "feedback": 0,
             "lessons": 0,
+            "enrollment": 0,
             "teacher.verified": 0,
             "teacher.watchList": 0,
             "teacher.verified": 0,
@@ -70,6 +71,7 @@ module.exports.getByIds = async (courseIds,  query, select) => {
       "$project":{
         "feedback": 0,
         "lessons": 0,
+        "enrollment": 0,
         "teacher.verified": 0,
         "teacher.watchList": 0,
         "teacher.verified": 0,
@@ -104,8 +106,26 @@ module.exports.update = async (courseId, query, updateParam) => {
     await Course.updateOne({...query, "_id": ObjectId(courseId)}, updateParam);
 }
 
-module.exports.delete = async (courseId) => {
-    Course.remove({"_id": ObjectId(courseId)});
+module.exports.delete = async (courseId,teacherId,roleId) => {
+  console.log(roleId);
+  console.log(courseId);
+  let result = {};
+  try{
+    if(roleId ===3){
+      result = await Course.deleteOne({"_id": ObjectId(courseId)});
+    }
+    else{
+      result = await Course.deleteOne({"_id": ObjectId(courseId),"teacherId" : teacherId});
+    }
+    if(result.deletedCount ==0){
+      return false;
+    }
+    return true;
+  }
+  catch(e){
+    return false;
+  }
+  
 }
 
 module.exports.create = async (courseParam) => {
