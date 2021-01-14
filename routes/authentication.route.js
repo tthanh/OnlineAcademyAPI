@@ -37,4 +37,9 @@ router.put('/update/:userId', auth, checkRole.hasRole(1), (req, res) => {
         .then(() => res.json({}));
 });
 
+router.put('/change_password', auth, checkRole.hasRole(1), (req, res) => {
+    authService.changePassword(req.body)
+        .then(() => res.json({}));
+});
+
 module.exports = router;
