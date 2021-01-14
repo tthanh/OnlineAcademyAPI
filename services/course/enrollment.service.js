@@ -9,8 +9,8 @@ module.exports.getAll = async (courseId, offset, limit) => {
     return await courseService.getById(courseId,undefined,"enrollment");
 }
 
-module.exports.getById = async (courseId, enrollmentId) => {
-    const enrollmentResult = await courseService.getById(courseId, {"enrollment._id":enrollmentId},{"enrollment.$":1});
+module.exports.getById = async (courseId, userId) => {
+    const enrollmentResult = await courseService.getById(courseId, {"enrollment.userId":userId},{"enrollment.$":1});
     if(enrollmentResult){
         return enrollmentResult.enrollment[0];
     }
@@ -22,9 +22,13 @@ module.exports.delete = async (courseId, enrollmentId) => {
     course.save();
 }
 
-module.exports.create = async (courseId, enrollmentParam) => {
-    const enrollment = new Enrollment(enrollmentParam);
+module.exports.create = async (courseId, userId) => {
+    const enrollment = new Enrollment({userId,courseId});
+    console.log(enrollment);
     const course = await courseService.getById(courseId);
+    if(course.enrollment === undefined){
+        course.enrollment = [];
+    }    
     course.enrollment.push(enrollment);
     course.save();  
 }
