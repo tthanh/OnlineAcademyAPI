@@ -39,10 +39,10 @@ router.get('/', async (req, res) => {
             courses = await courseService.getNew(offset, limit);
         }
         else if (sortMode ===1){
-            //courses = await courseService.getMostView(offset, limit);
+            courses = await courseService.getMostView(offset, limit);
         }
         else if (sortMode ===2){
-            //courses = await courseService.getMostEnroll(offset, limit);
+            courses = await courseService.getMostEnroll(offset, limit);
         }
     }
     else{

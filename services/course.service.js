@@ -109,20 +109,26 @@ module.exports.getMostView = async (offset, limit) => {
       },
       {
         "$project":{
-          "feedback": 0,
-          "lessons": 0,
-          "enrollment": 0,
-          "teacher.verified": 0,
-          "teacher.watchList": 0,
-          "teacher.verified": 0,
-          "teacher.password": 0,
-          "teacher.birthDate": 0,
-          "teacher.roleId": 0,
-          "teacher.createdDate": 0        
+          "_id" : 1,
+          "price" : 1,
+          "rating" : 1,
+          "discount" : 1,
+          "name" : 1,
+          "teacher._id" : 1,
+          "samplePictures" : 1,
+          "createdDate" : 1,
+          "lastEdited" : 1,
+          "teacher._id": 1,
+          "teacher.email": 1,
+          "teacher.firstName": 1,
+          "teacher.lastName": 1,
+          "enrollmentCount" : {$size : { "$ifNull": [ "$enrollment", [] ] }},
+          "subCategoryId": 1,
+          "categoryId" : 1,
         }
       },
-      {"$unwind": "$teacher"},
-      { "$sortByCount": "$feedback" }
+      {"$sort" : {"enrollmentCount" : 1}},
+      {"$unwind": "$teacher"}
       ]).limit(limit).skip(offset);
 
       let coursesJson = JSON.parse(JSON.stringify(courses));
@@ -154,25 +160,29 @@ module.exports.getMostEnroll = async (offset, limit) => {
       },
       {
         "$project":{
-          "feedback": 0,
-          "lessons": 0,
-          "enrollment": 0,
-          "teacher.verified": 0,
-          "teacher.watchList": 0,
-          "teacher.verified": 0,
-          "teacher.password": 0,
-          "teacher.birthDate": 0,
-          "teacher.roleId": 0,
-          "teacher.createdDate": 0,
-          "feedbackCount" : {$size : "$feedback"}
+          "_id" : 1,
+          "price" : 1,
+          "rating" : 1,
+          "discount" : 1,
+          "name" : 1,
+          "teacher._id" : 1,
+          "samplePictures" : 1,
+          "createdDate" : 1,
+          "lastEdited" : 1,
+          "teacher._id": 1,
+          "teacher.email": 1,
+          "teacher.firstName": 1,
+          "teacher.lastName": 1,
+          "feedbackCount" : {$size : "$feedback"},
+          "subCategoryId": 1,
+          "categoryId" : 1
         }
       },
       {"$unwind": "$teacher"},
-      { "$sortByCount": "$enrollment" }
+      {"$sort" : {"feedbackCount" : 1}}
       ]).limit(limit).skip(offset);
-      console.log(courses);
       let coursesJson = JSON.parse(JSON.stringify(courses));
-      
+      console.log(coursesJson);
       coursesJson = Promise.all(coursesJson.map(async x => {
         const category = await Category.findOne({_id : x.categoryId});
         const categoryJson = category.toJSON();
@@ -209,16 +219,26 @@ module.exports.getByIds = async (courseIds,  query, select) => {
     },
     {
       "$project":{
-        "feedback": 0,
-        "lessons": 0,
-        "enrollment": 0,
-        "teacher.verified": 0,
-        "teacher.watchList": 0,
-        "teacher.verified": 0,
-        "teacher.password": 0,
-        "teacher.birthDate": 0,
-        "teacher.roleId": 0,
-        "teacher.createdDate": 0        
+        "_id" : 1,
+        "price" : 1,
+        "rating" : 1,
+        "discount" : 1,
+        "name" : 1,
+        "teacher._id" : 1,
+        "categoryId" : 1,
+        "subCategoryId" : 1,
+        "samplePictures" : 1,
+        "createdDate" : 1,
+        "lastEdited" : 1,
+        "teacher._id": 1,
+        "teacher.email": 1,
+        "teacher.firstName": 1,
+        "teacher.lastName": 1,
+        "enrollmentCount" : {$size : "$enrollment"},
+        "subCategory._id": 1,
+        "subCategory.categoryName": 1,
+        "category.categoryName" : 1,
+        "category._id" : 1
       }
     },
     {"$unwind": "$teacher"}
