@@ -90,7 +90,7 @@ module.exports.update = async (userId,{firstName, lastName, birthDate}) => {
     User.findByIdAndUpdate(ObjectId(userId),{...firstName,lastName,birthDate});
 }
 
-module.exports.changePassword = async ({username,oldPassword,newPassword}) => {
+module.exports.changePassword = async ({userId, oldPassword,newPassword}) => {
     var result = false;
 
     do {
@@ -98,18 +98,14 @@ module.exports.changePassword = async ({username,oldPassword,newPassword}) => {
             break;
         }
 
-        var user = await User.findOne({ username: username });
+        var user = await User.findOne({ "_id": userId });
         if(!user){
             break;
         }
-        
-        if(user.password !== bcrypt.hashSync(oldPassword, 10)){
-            break;
+        if(bcrypt.compareSync(oldPassword, user.password)){
+            user.password = bcrypt.hashSync(newPassword, 10);
+            await user.save();
         }
-
-        user.password = bcrypt.hashSync(newPassword, 10);
-        
-        await user.save();
     }
     while(false);
     

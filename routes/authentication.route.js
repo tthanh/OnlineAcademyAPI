@@ -38,7 +38,8 @@ router.put('/update/:userId', auth, checkRole.hasRole(1), (req, res) => {
 });
 
 router.put('/change_password', auth, checkRole.hasRole(1), (req, res) => {
-    authService.changePassword(req.body)
+
+    authService.changePassword({...req.body,"userId":res.locals.userId})
         .then(() => res.json({}));
 });
 
