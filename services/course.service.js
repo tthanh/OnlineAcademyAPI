@@ -48,6 +48,146 @@ module.exports.getAll = async (offset, limit) => {
         return coursesJson;
 }
 
+module.exports.getNew = async (offset, limit) => {
+  var courses = await Course.aggregate([
+      { 
+        "$lookup":{
+          from: "users",
+          localField: "teacherId",
+          foreignField: "_id",
+          as: "teacher"
+        }
+      },
+      {
+        "$project":{
+          "feedback": 0,
+          "lessons": 0,
+          "enrollment": 0,
+          "teacher.verified": 0,
+          "teacher.watchList": 0,
+          "teacher.verified": 0,
+          "teacher.password": 0,
+          "teacher.birthDate": 0,
+          "teacher.roleId": 0,
+          "teacher.createdDate": 0        
+        }
+      },
+      {"$unwind": "$teacher"},
+      {
+        "$sort":{
+          "createdDate": 1
+        }
+      }
+      ]).limit(limit).skip(offset);
+
+      let coursesJson = JSON.parse(JSON.stringify(courses));
+      
+      coursesJson = Promise.all(coursesJson.map(async x => {
+        const category = await Category.findOne({_id : x.categoryId});
+        const categoryJson = category.toJSON();
+
+        x.subCategory = categoryJson.subCategories.find(y => y._id == x.subCategoryId );
+
+        x.category = _.omit({
+            ...category.toJSON()
+        },'subCategories');
+        return _.omit({...x},'categoryId','subCategoryId');
+      }));
+
+      return coursesJson;
+}
+
+module.exports.getMostView = async (offset, limit) => {
+  var courses = await Course.aggregate([
+      { 
+        "$lookup":{
+          from: "users",
+          localField: "teacherId",
+          foreignField: "_id",
+          as: "teacher"
+        }
+      },
+      {
+        "$project":{
+          "feedback": 0,
+          "lessons": 0,
+          "enrollment": 0,
+          "teacher.verified": 0,
+          "teacher.watchList": 0,
+          "teacher.verified": 0,
+          "teacher.password": 0,
+          "teacher.birthDate": 0,
+          "teacher.roleId": 0,
+          "teacher.createdDate": 0        
+        }
+      },
+      {"$unwind": "$teacher"},
+      { "$sortByCount": "$feedback" }
+      ]).limit(limit).skip(offset);
+
+      let coursesJson = JSON.parse(JSON.stringify(courses));
+      
+      coursesJson = Promise.all(coursesJson.map(async x => {
+        const category = await Category.findOne({_id : x.categoryId});
+        const categoryJson = category.toJSON();
+
+        x.subCategory = categoryJson.subCategories.find(y => y._id == x.subCategoryId );
+
+        x.category = _.omit({
+            ...category.toJSON()
+        },'subCategories');
+        return _.omit({...x},'categoryId','subCategoryId');
+      }));
+
+      return coursesJson;
+}
+
+module.exports.getMostEnroll = async (offset, limit) => {
+  var courses = await Course.aggregate([
+      { 
+        "$lookup":{
+          from: "users",
+          localField: "teacherId",
+          foreignField: "_id",
+          as: "teacher"
+        }
+      },
+      {
+        "$project":{
+          "feedback": 0,
+          "lessons": 0,
+          "enrollment": 0,
+          "teacher.verified": 0,
+          "teacher.watchList": 0,
+          "teacher.verified": 0,
+          "teacher.password": 0,
+          "teacher.birthDate": 0,
+          "teacher.roleId": 0,
+          "teacher.createdDate": 0,
+          "feedbackCount" : {$size : "$feedback"}
+        }
+      },
+      {"$unwind": "$teacher"},
+      { "$sortByCount": "$enrollment" }
+      ]).limit(limit).skip(offset);
+      console.log(courses);
+      let coursesJson = JSON.parse(JSON.stringify(courses));
+      
+      coursesJson = Promise.all(coursesJson.map(async x => {
+        const category = await Category.findOne({_id : x.categoryId});
+        const categoryJson = category.toJSON();
+
+        x.subCategory = categoryJson.subCategories.find(y => y._id == x.subCategoryId );
+
+        x.category = _.omit({
+            ...category.toJSON()
+        },'subCategories');
+        return _.omit({...x},'categoryId','subCategoryId');
+      }));
+
+      return coursesJson;
+}
+
 module.exports.getById = async (courseId,  query, select) => {
     return await Course.findOne({...query, "_id": ObjectId(courseId)}, select);
 }

@@ -22,6 +22,8 @@ router.get('/', async (req, res) => {
     let offset = parseInt(req.query.offset);
     let limit = parseInt(req.query.limit);
 
+    let sortMode = parseInt(req.query.sortmode);
+
     let courses ={}
 
     if(isNaN(offset) ||offset < 0){
@@ -31,12 +33,27 @@ router.get('/', async (req, res) => {
     if(isNaN(limit) || limit < 0){
         limit = 20;
     }
-    if(req.query.keyword){
-        courses = await courseService.search(req.query.keyword,offset,limit);
+
+    if(sortMode && (!isNaN(sortMode) || sortMode >= 0)){
+        if(sortMode === 0){
+            courses = await courseService.getNew(offset, limit);
+        }
+        else if (sortMode ===1){
+            //courses = await courseService.getMostView(offset, limit);
+        }
+        else if (sortMode ===2){
+            //courses = await courseService.getMostEnroll(offset, limit);
+        }
     }
     else{
-        courses= await courseService.getAll(offset, limit);
+        if(req.query.keyword){
+            courses = await courseService.search(req.query.keyword,offset,limit);
+        }
+        else{
+            courses= await courseService.getAll(offset, limit);
+        }
     }
+    
     res.status(200).send(courses);
 });
 
