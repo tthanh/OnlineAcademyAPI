@@ -5,7 +5,7 @@ const auth = require('../middlewares/auth.mdw');
 const checkRole = require('../middlewares/check_role.mdw');
 
 router.get('/', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
-    res.send(await userService.getWatchList({_id : res.locals.userId}));
+    res.status(200).send(await userService.getWatchList({_id : res.locals.userId}));
 });
 
 router.post('/:courseId', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
