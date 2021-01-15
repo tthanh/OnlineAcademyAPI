@@ -19,7 +19,7 @@ module.exports.getById = async ({ _id }) => {
 }
 
 module.exports.getAll = async () => {
-  const users = await User.find();
+  const users = await User.find({});
   if (users)
     return users.map(u => _.omit({
       ...u.toJSON()

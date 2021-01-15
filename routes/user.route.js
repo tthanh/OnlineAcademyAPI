@@ -13,13 +13,12 @@ router.get('/', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
     res.status(200).send(await userService.getById({_id :res.locals.userId}));
 });
 
+router.get('/all', auth, checkRole.hasRole(3), async (req, res) => {
+    res.status(200).send(await userService.getAll());
+});
 
 router.get('/:userId', auth, checkRole.hasRoleGreaterThan(1), async (req, res) => {
     res.status(200).send(await userService.getById({_id :req.params.userId}));
-});
-
-router.get('/all', auth, checkRole.hasRole(3), async (req, res) => {
-    res.status(200).send(await userService.getAll());
 });
 
 router.delete('/:userId', auth, checkRole.hasRole(3), async (req, res) => {
